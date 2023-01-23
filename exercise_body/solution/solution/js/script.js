@@ -1,7 +1,9 @@
+// A global variable which we pass into every function that needs it to keep
+// them more pure.
 const ROOT_URL = "http://localhost:3000/";
 
-const sendRequest = async(method, ROOT_URL, url_part = "", body = false) => {
-    const url = `${ROOT_URL}${url_part}`;
+const sendRequest = async(method, root_url, url_part = "", body = false) => {
+    const url = `${root_url}${url_part}`;
     const options = {
         method,
     };
@@ -26,8 +28,8 @@ const sendRequest = async(method, ROOT_URL, url_part = "", body = false) => {
     return result;
 };
 
-const showReservations = async() => {
-    let reservations = await sendRequest("GET", ROOT_URL, "reservations");
+const showReservations = async root_url => {
+    let reservations = await sendRequest("GET", root_url, "reservations");
 
     // Only show reservations in 2024 to make it easier to see the reservations
     // we care about.
@@ -37,7 +39,7 @@ const showReservations = async() => {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Show all reservations
-await showReservations();
+await showReservations(ROOT_URL);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Create a new reservation.
@@ -56,7 +58,7 @@ const kusamaReservationResult = await sendRequest(
 console.log(
     `ℹ️ Reservation created for Yayoi Kusama with id ${kusamaReservationResult.id}`
 );
-await showReservations();
+await showReservations(ROOT_URL);
 
 // Create another new reservation.
 const neshatReservation = {
@@ -74,7 +76,7 @@ const neshatReservationResult = await sendRequest(
 console.log(
     `ℹ️ Reservation created for Shirin Neshat with id ${neshatReservationResult.id}`
 );
-await showReservations();
+await showReservations(ROOT_URL);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Update Yayoi Kusama's reservation.
@@ -94,7 +96,7 @@ await sendRequest(
     kusamaReservationUpdated
 );
 console.log("ℹ️ Reservation for Ms Yayoi Kusama has been updated.");
-await showReservations();
+await showReservations(ROOT_URL);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Update reservation using PATCH
@@ -111,4 +113,4 @@ await sendRequest(
     neshatReservationPartialUpdate
 );
 console.log("ℹ️ Reservation for Shirin Neshat has been updated.");
-await showReservations();
+await showReservations(ROOT_URL);

@@ -1,7 +1,9 @@
+// A global variable which we pass into every function that needs it to keep
+// them more pure.
 const ROOT_URL = "http://localhost:3000/";
 
-const sendRequest = async(method, ROOT_URL, url_part = "", body = false) => {
-    const url = `${ROOT_URL}${url_part}`;
+const sendRequest = async(method, root_url, url_part = "", body = false) => {
+    const url = `${root_url}${url_part}`;
     const options = {
         method,
     };
@@ -28,14 +30,14 @@ const sendRequest = async(method, ROOT_URL, url_part = "", body = false) => {
     return result;
 };
 
-const showReservations = async() => {
-    let reservations = await sendRequest("GET", ROOT_URL, "reservations");
+const showReservations = async root_url => {
+    let reservations = await sendRequest("GET", root_url, "reservations");
     console.table(reservations);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // Show all reservations
-await showReservations();
+await showReservations(ROOT_URL);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Create a new reservation.
@@ -58,7 +60,7 @@ if (kusamaReservationResult) {
 } else {
     console.log("No reservation created.");
 }
-await showReservations();
+await showReservations(ROOT_URL);
 
 // Create another new reservation.
 const neshatReservation = {
@@ -80,7 +82,7 @@ if (neshatReservationResult) {
 } else {
     console.log("No reservation created.");
 }
-await showReservations();
+await showReservations(ROOT_URL);
 
 ///////////////////////////////////////////////////////////////////////////////
 if (kusamaReservationResult) {
@@ -102,7 +104,7 @@ if (kusamaReservationResult) {
         kusamaReservationUpdated
     );
     console.log("ℹ️ Reservation for Ms Yayoi Kusama has been updated.");
-    await showReservations();
+    await showReservations(ROOT_URL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -121,5 +123,5 @@ if (neshatReservationResult) {
         neshatReservationPartialUpdate
     );
     console.log("ℹ️ Reservation for Shirin Neshat has been updated.");
-    await showReservations();
+    await showReservations(ROOT_URL);
 }

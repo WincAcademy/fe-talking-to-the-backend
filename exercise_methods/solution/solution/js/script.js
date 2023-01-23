@@ -1,3 +1,5 @@
+// A global variable which we pass into every function that needs it to keep
+// them more pure.
 const ROOT_URL = "http://localhost:3000/";
 
 const grabRandomId = items => {
@@ -9,8 +11,8 @@ const grabRandomId = items => {
     return items[index]["id"];
 };
 
-const sendRequest = async(method, ROOT_URL, url_part) => {
-    const response = await fetch(`${ROOT_URL}${url_part}`, { method });
+const sendRequest = async(method, root_url, url_part) => {
+    const response = await fetch(`${root_url}${url_part}`, { method });
     const json = await response.json();
     return json;
 };

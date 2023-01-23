@@ -1,9 +1,11 @@
+// A global variable which we pass into every function that needs it to keep
+// them more pure.
 const ROOT_URL = "http://localhost:3000/";
 
-const sendRequest = async(method, ROOT_URL, url_part = "", body = false) => {};
+const sendRequest = async(method, root_url, url_part = "", body = false) => {};
 
-const showReservations = async() => {
-    let reservations = await sendRequest("GET", ROOT_URL, "reservations");
+const showReservations = async root_url => {
+    let reservations = await sendRequest("GET", root_url, "reservations");
 
     // Only show reservations in 2024 to make it easier to see the reservations
     // we care about.
@@ -13,7 +15,7 @@ const showReservations = async() => {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Show all reservations
-await showReservations();
+await showReservations(ROOT_URL);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Create a new reservation.
