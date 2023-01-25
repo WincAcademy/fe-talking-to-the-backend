@@ -1,10 +1,3 @@
-import {
-    getFlavours,
-    getFlavour,
-    updateFlavour,
-    addFlavour,
-} from "./flavours.js";
-
 const ROOT_URL = "http://localhost:3000/";
 const API_KEY = "Vz2FpaZAXr0hu9EJP70X";
 
@@ -17,7 +10,7 @@ const generateSendRequest =
         const options = {
             method,
         };
-        if (method !== "GET") {
+        if (!["GET", "DELETE"].includes(method)) {
             options.body = JSON.stringify(body);
             options.headers = {
                 "Content-Type": "application/json;charset=utf-8",
@@ -45,22 +38,31 @@ const generateSendRequest =
 // This is the function we're going to call.
 const sendRequest = generateSendRequest(ROOT_URL, API_KEY);
 
-const getItems = itemType => {
-    if (itemType === "flavours") return getFlavours();
+const getItems = async itemType => {
+    return await sendRequest("GET", itemType);
 };
 
-const getItem = (itemType, itemId = undefined) => {
-    if (itemType === "flavours") return getFlavour(itemId);
+const getItem = async(itemType, itemId) => {
+    for (let item of await getItems(itemType)) {
+        if (item.id === itemId) {
+            return item;
+        }
+    }
 };
 
 const addItem = async(itemType, data) => {
     // console.log("addItem", { itemType, data });
-    if (itemType === "flavours") return addFlavour(data);
+    return sendRequest("POST", `${itemType}`, data);
 };
 
 const updateItem = (itemType, itemId, data) => {
     // console.log("updateItem", { itemType, itemId, data });
-    if (itemType === "flavours") return updateFlavour(itemId, data);
+    return sendRequest("PUT", `${itemType}/${itemId}`, data);
 };
 
-export { sendRequest, addItem, getItem, getItems, updateItem };
+const deleteItem = (itemType, itemId) => {
+    // console.log("deleteItem", { itemType, itemId });
+    return sendRequest("DELETE", `${itemType}/${itemId}`);
+};
+
+export { sendRequest, addItem, getItem, getItems, updateItem, deleteItem };

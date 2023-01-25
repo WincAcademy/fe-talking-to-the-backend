@@ -35,10 +35,21 @@ const renderEditButton = (itemType, itemId) => {
     return button;
 };
 
+const renderDeleteButton = (itemType, itemId) => {
+    const button = document.createElement("input");
+    button.type = "button";
+    button.value = "Delete";
+    button.classList.add("delete");
+    button.dataset.itemType = itemType;
+    button.dataset.itemId = itemId;
+    return button;
+};
+
 const renderItem = (item, itemType) => {
     const li = document.createElement("li");
     li.append(renderItemProperties(item));
     li.append(renderEditButton(itemType, item.id));
+    li.append(renderDeleteButton(itemType, item.id));
     return li;
 };
 
@@ -63,21 +74,11 @@ const renderItemList = (items, itemType) => {
     for (let item of items) {
         ul.append(renderItem(item, itemType));
     }
-    return ul;
+    insertIntoDom(ul);
 };
 
 const renderFlavourList = flavours => {
     insertIntoDom(renderItemList(flavours, "flavours"));
 };
 
-// const renderCustomerList = customers => {
-//     const customerList = renderItemList(customers);
-//     emptyRoot();
-//     getRoot().append(customerList);
-// };
-
-// const renderCustomerList = customers => {};
-
-// const renderOrderList = orders => {};
-
-export { renderFlavourList };
+export { renderFlavourList, renderItemList };

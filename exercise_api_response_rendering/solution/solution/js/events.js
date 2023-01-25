@@ -1,6 +1,12 @@
 import { getRoot, renderList, renderHome } from "./ui/shared.js";
 import { getDataFromRenderedForm, renderForm } from "./ui/form.js";
-import { addItem, updateItem, getItem, getItems } from "./io/shared.js";
+import {
+    addItem,
+    updateItem,
+    getItem,
+    getItems,
+    deleteItem,
+} from "./io/shared.js";
 
 // We listen to all events under <main>
 const handleSubmitEvent = async event => {
@@ -22,25 +28,38 @@ const handleSubmitEvent = async event => {
     renderList(itemType);
 };
 
+const handleEdit = async event => {
+    const itemType = event.target.dataset.itemType;
+    const itemId = parseInt(event.target.dataset.itemId);
+    renderForm(itemType, await getItem(itemType, itemId));
+};
+
+const handleDelete = async event => {
+    const itemType = event.target.dataset.itemType;
+    const itemId = parseInt(event.target.dataset.itemId);
+    await deleteItem(itemType, itemId);
+    renderList(itemType);
+};
+
+const handleAdd = event => {
+    const itemType = event.target.dataset.itemType;
+    renderForm(itemType);
+};
+
 const handleClickEvent = async event => {
     // Only react to add/edit button clicks.
-    if (event.target.classList.contains("edit")) {
-        const itemType = event.target.dataset.itemType;
-        const itemId = parseInt(event.target.dataset.itemId);
-        renderForm(itemType, await getItem(itemType, itemId));
-    }
-    if (event.target.classList.contains("add")) {
-        const itemType = event.target.dataset.itemType;
-        renderForm(itemType);
-    }
+    if (event.target.classList.contains("edit")) handleEdit(event);
+    if (event.target.classList.contains("add")) handleAdd(event);
+    if (event.target.classList.contains("delete")) handleDelete(event);
 };
 
 const handleMenuClickEvent = event => {
     const menuItem = event.target.dataset.link;
     if (menuItem === "home") {
         renderHome();
+    } else {
+        renderList(menuItem);
     }
-    renderList(menuItem);
 };
 
 const addEventListeners = () => {

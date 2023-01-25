@@ -1,5 +1,5 @@
-import { getFlavours } from "../io/flavours.js";
-import { renderFlavourList } from "./list.js";
+import { getItems } from "../io/shared.js";
+import { renderItemList } from "./list.js";
 
 const ROOT_ELEMENT = "main";
 
@@ -47,9 +47,7 @@ const renderHome = () => {
 };
 
 const renderList = async itemType => {
-    if (itemType === "flavours") renderFlavourList(await getFlavours());
-    if (itemType === "customers") renderCustomerList(await getCustomers());
-    // if (itemType === "flavours") renderFlavourList(await getFlavours());
+    renderItemList(await getItems(itemType), itemType);
 };
 
 export { insertIntoDom, getRoot, renderList, renderHome };
