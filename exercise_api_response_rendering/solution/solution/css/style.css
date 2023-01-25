@@ -15,3 +15,7 @@ nav {
     /* display: none; */
     /*Temporarily */
 }
+
+form select {
+    width: 100%;
+}

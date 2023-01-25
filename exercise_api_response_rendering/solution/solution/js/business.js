@@ -1,5 +1,14 @@
 // Business rules
 
+import { getItems } from "./io.js";
+
+const getCustomerEmails = async() => {
+    const customers = await getItems("customers");
+    return customers.map(c => c.email);
+};
+
+const getOrderStatusList = () => ["unpaid", "paid", "transit", "delivered"];
+
 // Flavours
 // We can add, update and delete flavours.
 // Name and price are required
@@ -20,3 +29,5 @@
 // We can only update the status of an order.
 // Status can be: unpaid, paid, transit, delivered. And only in that order.
 // customerId, date, status are required, items needs to be > 0
+
+export { getCustomerEmails, getOrderStatusList };
