@@ -1,7 +1,7 @@
 const itemTypes = {
     customers: ["name", "email"],
     flavours: ["name", "price"],
-    orders: ["customerId", "date", "status", "items"],
+    orders: ["customerEmail", "date", "status", "order description"],
 };
 
 export { itemTypes };
