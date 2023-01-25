@@ -54,16 +54,6 @@ const renderForm = (itemType, data) => {
     insertIntoDom(form);
 };
 
-const renderOrderForm = order => {
-    const form = renderForm("orders", order);
-    insertIntoDom(form);
-};
-
-const renderCustomerForm = customer => {
-    const form = renderForm("customers", customer);
-    insertIntoDom(form);
-};
-
 const getDataFromRenderedForm = () => {
     const formData = new FormData(getRoot().querySelector("form"));
 

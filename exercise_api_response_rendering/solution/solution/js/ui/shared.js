@@ -1,4 +1,4 @@
-import { getItems } from "../io/shared.js";
+import { getItems } from "../io.js";
 import { renderItemList } from "./list.js";
 
 const ROOT_ELEMENT = "main";
