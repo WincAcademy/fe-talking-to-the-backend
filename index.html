@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>async/await</title>
+</head>
+<body>
+    <button type="button" id="fetch-button">Fetch Post And Comments</button>
+</body>
+<script>
+    async function fetchJson(url) {
+        const response = await fetch(url);
+        const json = await response.json();
+        return json;
+    }
+
+    async function fetchPostAndComments(postId) {
+        const users = await fetchJson('http://localhost:3000/users');
+        const post = await fetchJson('http://localhost:3000/posts/' + postId);
+        const comments = await fetchJson("http://localhost:3000/comments?postId=" + postId);
+
+        const postAuthor = users.find(user => user.id === post.userId);
+        console.log(postAuthor.name, '-', post.body);
+
+        for (const comment of comments) {
+            const commentAuthor = users.find(user => user.id === comment.userId);
+            console.log(commentAuthor.name, '-', comment.comment);
+        }
+    }
+
+    const fetchButton = document.getElementById('fetch-button');
+    fetchButton.addEventListener('click', () => fetchPostAndComments("892a4ba3"));
+</script>
+</html>
