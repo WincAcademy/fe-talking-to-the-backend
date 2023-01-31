@@ -1,6 +1,12 @@
 import { getRoot, renderList, renderHome } from "./ui/shared.js";
 import { getDataFromRenderedForm, renderForm } from "./ui/form.js";
-import { addItem, updateItem, deleteItem } from "./business.js";
+import {
+    addItem,
+    updateItem,
+    deleteItem,
+    validateAddUpdate,
+    validateDelete,
+} from "./business.js";
 import { getItem } from "./io.js";
 
 // We listen to all events under <main>
@@ -12,8 +18,20 @@ const handleSubmitEvent = async event => {
     const itemType = formData.type;
     delete formData.type;
 
-    // TODO: talk to business layer first, that talks to IO
-    if (formData.id === undefined) {
+    const operation = formData.id === undefined ? "add" : "update";
+
+    const [errorsFound, errors] = await validateAddUpdate(
+        operation,
+        itemType,
+        formData
+    );
+
+    if (errorsFound) {
+        renderForm(itemType, formData, errors);
+        return;
+    }
+
+    if (operation === "add") {
         await addItem(itemType, formData);
     } else {
         const id = formData.id;
@@ -31,6 +49,7 @@ const handleEdit = async(itemType, itemId) => {
 };
 
 const handleDelete = async(itemType, itemId) => {
+    // TODO: validate
     await deleteItem(itemType, itemId);
     renderList(itemType);
 };

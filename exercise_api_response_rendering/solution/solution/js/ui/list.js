@@ -1,4 +1,5 @@
 import { insertIntoDom } from "./shared.js";
+import { getCustomer } from "../business.js";
 
 const renderItemProperty = (name, value) => {
     const li = document.createElement("li");
@@ -13,12 +14,22 @@ const renderItemProperty = (name, value) => {
     return li;
 };
 
-const renderItemProperties = item => {
+const renderItemProperties = async item => {
     const ul = document.createElement("ul");
     ul.classList.add("item_properties");
     for (let [name, value] of Object.entries(item)) {
         if (name === "id") {
             continue;
+        }
+        if (name === "customerId") {
+            name = "customer";
+            // TODO: Better to find a single location for converting all ids.
+            const id = parseInt(item.customerId);
+            const customer = await getCustomer(id);
+            value = customer.name;
+        }
+        if (name === "orderDescription") {
+            name = "order description";
         }
         ul.append(renderItemProperty(name, value));
     }
@@ -45,9 +56,9 @@ const renderDeleteButton = (itemType, itemId) => {
     return button;
 };
 
-const renderItem = (item, itemType) => {
+const renderItem = async(item, itemType) => {
     const li = document.createElement("li");
-    li.append(renderItemProperties(item));
+    li.append(await renderItemProperties(item));
     li.append(renderEditButton(itemType, item.id));
     li.append(renderDeleteButton(itemType, item.id));
     return li;
@@ -66,19 +77,19 @@ const renderAddButton = itemType => {
     return li;
 };
 
-const renderItemList = (items, itemType) => {
+const renderItemList = async(items, itemType) => {
     const ul = document.createElement("ul");
     ul.classList.add("items");
     ul.classList.add(itemType);
     ul.append(renderAddButton(itemType));
     for (let item of items) {
-        ul.append(renderItem(item, itemType));
+        ul.append(await renderItem(item, itemType));
     }
     insertIntoDom(ul);
 };
 
-const renderFlavourList = flavours => {
-    insertIntoDom(renderItemList(flavours, "flavours"));
+const renderFlavourList = async flavours => {
+    insertIntoDom(await renderItemList(flavours, "flavours"));
 };
 
 export { renderFlavourList, renderItemList };

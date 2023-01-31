@@ -50,7 +50,7 @@ const getItem = async(itemType, itemId) => {
     }
 };
 
-const addItem = async(itemType, data) => {
+const addItem = (itemType, data) => {
     // console.log("addItem", { itemType, data });
     return sendRequest("POST", `${itemType}`, data);
 };

@@ -1,18 +1,24 @@
 import { getRoot } from "./shared.js";
 import { insertIntoDom } from "./shared.js";
-import { itemTypes } from "../business.js";
-import { getCustomerEmails, getOrderStatusList } from "../business.js";
+import { itemTypes, getCustomers, getOrderStatusList } from "../business.js";
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 
 const renderTextInputField = (name, value) => {
     const label = document.createElement("label");
     const span = document.createElement("span");
-    span.innerText = capitalize(name);
+    let displayName = name;
+    if (name === "orderDescription") {
+        displayName = "Order Description";
+    }
+
+    span.innerText = capitalize(displayName);
     label.append(span);
     const input = document.createElement("input");
     if (name === "date") {
         input.type = "date";
+    } else if (name === "email") {
+        input.type = "email";
     } else {
         input.type = "text";
     }
@@ -30,12 +36,12 @@ const renderInvisibleInputField = (name, value) => {
     return input;
 };
 
-const renderEmailDropdown = async(name, value = "") => {
-    const allEmails = await getCustomerEmails();
+const renderCustomerSelect = async(name, value = "") => {
+    const customers = await getCustomers();
 
     const label = document.createElement("label");
     const span = document.createElement("span");
-    span.innerText = capitalize(name);
+    span.innerText = "Customer";
     label.append(span);
 
     const select = document.createElement("select");
@@ -46,10 +52,10 @@ const renderEmailDropdown = async(name, value = "") => {
     option.value = "";
     select.append(option);
 
-    for (const email of allEmails) {
+    for (const customer of customers) {
         const option = document.createElement("option");
-        option.textContent = email;
-        option.value = email;
+        option.textContent = customer.name;
+        option.value = customer.id;
         select.append(option);
     }
     select.value = value;
@@ -86,21 +92,52 @@ const renderStatusDropdown = (name, value = "") => {
     return label;
 };
 
-const renderForm = async(itemType, data) => {
-    const operation = data !== undefined ? "update" : "add";
+const renderError = error => {
+    const li = document.createElement("li");
+    li.textContent = error;
+    return li;
+};
+
+const renderErrors = errors => {
+    const ul = document.createElement("ul");
+    ul.classList.add("errors");
+    for (let error of errors) {
+        ul.append(renderError(error));
+    }
+    return ul;
+};
+
+const renderForm = async(itemType, data, errors = []) => {
+    // Three situations:
+    // 1. fresh add: no data
+    // 2. re-add (because of errors): data, but no id
+    // 3. update
+    let operation = "update";
+    if (data === undefined) {
+        operation = "add";
+    }
+    if (data && data.id === undefined) {
+        // We could use optional chaining in the condition here.
+        operation = "add";
+    }
+
     const form = document.createElement("form");
     form.classList.add(itemType);
+
+    if (errors.length > 0) {
+        form.append(renderErrors(errors));
+    }
 
     form.append(renderInvisibleInputField("type", itemType));
 
     const itemTypeFields = itemTypes[itemType];
 
     for (const fieldName of itemTypeFields) {
-        const fieldValue = operation === "update" ? data[fieldName] : "";
-        if (fieldName === "id") {
+        const fieldValue = data ? data[fieldName] : "";
+        if (fieldName === "id" && data.id !== undefined) {
             form.append(renderInvisibleInputField(fieldName, fieldValue));
-        } else if (fieldName === "customerEmail") {
-            form.append(await renderEmailDropdown(fieldName, fieldValue));
+        } else if (fieldName === "customerId") {
+            form.append(await renderCustomerSelect(fieldName, fieldValue));
         } else if (fieldName === "status") {
             form.append(renderStatusDropdown(fieldName, fieldValue));
         } else {
@@ -113,17 +150,37 @@ const renderForm = async(itemType, data) => {
     }
     const submit = document.createElement("input");
     submit.type = "submit";
-    submit.value = "Add/Update";
+    submit.value = operation;
     form.append(submit);
 
     insertIntoDom(form);
+};
+
+const parseNumber = value => {
+    const converted = Number(value);
+    if (Number.isNaN(converted)) {
+        return value; // Actual validation is done in business.js
+    } else {
+        return converted;
+    }
 };
 
 const getDataFromRenderedForm = () => {
     const formData = new FormData(getRoot().querySelector("form"));
 
     const data = {};
-    for (const [name, value] of formData.entries()) {
+    for (let [name, value] of formData.entries()) {
+        // Remove whitespace from all fields.
+
+        value = value.toString().trim();
+        // Parse numerical fields.
+        if (name === "price") {
+            value = parseNumber(value);
+        }
+        // Always simple-parse id
+        if (name === "id" || name === "customerId") {
+            value = parseInt(value);
+        }
         data[name] = value;
     }
     return data;
