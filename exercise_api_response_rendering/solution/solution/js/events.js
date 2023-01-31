@@ -1,6 +1,6 @@
 import { getRoot, renderList, renderHome } from "./ui/shared.js";
 import { getDataFromRenderedForm, renderForm } from "./ui/form.js";
-import { addItem, updateItem, getItem, getItems, deleteItem } from "./io.js";
+import { addItem, updateItem, getItem, deleteItem } from "./io.js";
 
 // We listen to all events under <main>
 const handleSubmitEvent = async event => {
@@ -22,29 +22,26 @@ const handleSubmitEvent = async event => {
     renderList(itemType);
 };
 
-const handleEdit = async event => {
-    const itemType = event.target.dataset.itemType;
-    const itemId = parseInt(event.target.dataset.itemId);
+const getItemType = event => event.target.dataset.itemType;
+const getItemId = event => parseInt(event.target.dataset.itemId);
+
+const handleEdit = async(itemType, itemId) => {
     renderForm(itemType, await getItem(itemType, itemId));
 };
 
-const handleDelete = async event => {
-    const itemType = event.target.dataset.itemType;
-    const itemId = parseInt(event.target.dataset.itemId);
+const handleDelete = async(itemType, itemId) => {
     await deleteItem(itemType, itemId);
     renderList(itemType);
 };
 
-const handleAdd = event => {
-    const itemType = event.target.dataset.itemType;
-    renderForm(itemType);
-};
-
 const handleClickEvent = async event => {
-    // Only react to add/edit button clicks.
-    if (event.target.classList.contains("edit")) handleEdit(event);
-    if (event.target.classList.contains("add")) handleAdd(event);
-    if (event.target.classList.contains("delete")) handleDelete(event);
+    // Only react to add/edit/delete button clicks.
+    // We assume classList only contains one of these.
+    if (event.target.classList.contains("edit"))
+        handleEdit(getItemType(event), getItemId(event));
+    if (event.target.classList.contains("delete"))
+        handleDelete(getItemType(event), getItemId(event));
+    if (event.target.classList.contains("add")) renderForm(getItemType(event));
 };
 
 const handleMenuClickEvent = event => {
@@ -57,6 +54,8 @@ const handleMenuClickEvent = event => {
 };
 
 const addEventListeners = () => {
+    // We use "event bubbling" here to listen to all events inside of the root
+    // element.
     getRoot().addEventListener("submit", handleSubmitEvent);
     getRoot().addEventListener("click", handleClickEvent);
     document
