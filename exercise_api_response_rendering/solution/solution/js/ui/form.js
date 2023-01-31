@@ -1,6 +1,6 @@
 import { getRoot } from "./shared.js";
 import { insertIntoDom } from "./shared.js";
-import { itemTypes } from "../state.js";
+import { itemTypes } from "../business.js";
 import { getCustomerEmails, getOrderStatusList } from "../business.js";
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);

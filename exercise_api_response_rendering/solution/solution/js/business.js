@@ -1,6 +1,10 @@
 // Business rules
 
-import { getItems } from "./io.js";
+const itemTypes = {
+    customers: ["name", "email"],
+    flavours: ["name", "price"],
+    orders: ["customerEmail", "date", "status", "order description"],
+};
 
 const getCustomerEmails = async() => {
     const customers = await getItems("customers");
@@ -30,4 +34,4 @@ const getOrderStatusList = () => ["unpaid", "paid", "transit", "delivered"];
 // Status can be: unpaid, paid, transit, delivered. And only in that order.
 // customerId, date, status are required, items needs to be > 0
 
-export { getCustomerEmails, getOrderStatusList };
+export { getCustomerEmails, getOrderStatusList, itemTypes };
