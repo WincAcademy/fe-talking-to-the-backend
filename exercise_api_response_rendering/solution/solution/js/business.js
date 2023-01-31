@@ -1,4 +1,5 @@
 // Business rules
+import * as io from "./io.js";
 
 const itemTypes = {
     customers: ["name", "email"],
@@ -7,11 +8,15 @@ const itemTypes = {
 };
 
 const getCustomerEmails = async() => {
-    const customers = await getItems("customers");
-    return customers.map(c => c.email);
+    const customers = await io.getItems("customers");
+    return customers.map(customer => customer.email);
 };
 
 const getOrderStatusList = () => ["unpaid", "paid", "transit", "delivered"];
+
+const addItem = io.addItem;
+const updateItem = io.updateItem;
+const deleteItem = io.deleteItem;
 
 // Flavours
 // We can add, update and delete flavours.
@@ -34,4 +39,11 @@ const getOrderStatusList = () => ["unpaid", "paid", "transit", "delivered"];
 // Status can be: unpaid, paid, transit, delivered. And only in that order.
 // customerId, date, status are required, items needs to be > 0
 
-export { getCustomerEmails, getOrderStatusList, itemTypes };
+export {
+    getCustomerEmails,
+    getOrderStatusList,
+    itemTypes,
+    addItem,
+    updateItem,
+    deleteItem,
+};

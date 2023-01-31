@@ -1,6 +1,7 @@
 import { getRoot, renderList, renderHome } from "./ui/shared.js";
 import { getDataFromRenderedForm, renderForm } from "./ui/form.js";
-import { addItem, updateItem, getItem, deleteItem } from "./io.js";
+import { addItem, updateItem, deleteItem } from "./business.js";
+import { getItem } from "./io.js";
 
 // We listen to all events under <main>
 const handleSubmitEvent = async event => {
