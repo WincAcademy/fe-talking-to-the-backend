@@ -61,4 +61,4 @@ const deleteItem = (itemType, itemId) => {
     return sendRequest("DELETE", `${itemType}/${itemId}`);
 };
 
-export { sendRequest, addItem, getItem, getItems, updateItem, deleteItem };
+export { addItem, getItem, getItems, updateItem, deleteItem };
