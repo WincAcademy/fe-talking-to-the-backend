@@ -23,7 +23,7 @@ const renderItemProperties = async item => {
         }
         if (name === "customerId") {
             name = "customer";
-            // TODO: Better to find a single location for converting all ids.
+            // Better to find a single location for converting all ids.
             const id = parseInt(item.customerId);
             const customer = await getCustomer(id);
             value = customer.name;
