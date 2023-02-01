@@ -4,7 +4,7 @@ import { itemTypes, getCustomers, getOrderStatusList } from "../business.js";
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 
-const renderTextInputField = (name, value) => {
+const renderTextInputField = (name, value, readonly = False) => {
     const label = document.createElement("label");
     const span = document.createElement("span");
     let displayName = name;
@@ -15,6 +15,8 @@ const renderTextInputField = (name, value) => {
     span.innerText = capitalize(displayName);
     label.append(span);
     const input = document.createElement("input");
+    input.readOnly = readonly;
+
     if (name === "date") {
         input.type = "date";
     } else if (name === "email") {
@@ -36,7 +38,7 @@ const renderInvisibleInputField = (name, value) => {
     return input;
 };
 
-const renderCustomerSelect = async(name, value = "") => {
+const renderCustomerSelect = async(name, value = "", readonly = false) => {
     const customers = await getCustomers();
 
     const label = document.createElement("label");
@@ -46,6 +48,8 @@ const renderCustomerSelect = async(name, value = "") => {
 
     const select = document.createElement("select");
     select.name = name;
+
+    select.disabled = readonly;
 
     const option = document.createElement("option");
     option.textContent = "Select customer";
@@ -117,18 +121,36 @@ const renderForm = async(itemType, data, errors = []) => {
 
     const itemTypeFields = itemTypes[itemType];
 
-    // TODO: We can only update the status field of an order.
-
     for (const fieldName of itemTypeFields) {
         const fieldValue = data ? data[fieldName] : "";
+
+        // We can only update the status field of an order.
+        let readonly = false;
+        if (
+            operation === "update" &&
+            itemType === "orders" &&
+            fieldName !== "order"
+        ) {
+            readonly = true;
+        }
+
         if (fieldName === "id" && data.id !== undefined) {
             form.append(renderInvisibleInputField(fieldName, fieldValue));
         } else if (fieldName === "customerId") {
-            form.append(await renderCustomerSelect(fieldName, fieldValue));
+            // To be able to show a disabled select but still get the original value passed along we will need to
+            // add a hidden field with the same name and value.
+            if (!readonly) {
+                form.append(
+                    await renderCustomerSelect(fieldName, fieldValue, readonly)
+                );
+            } else {
+                form.append(await renderCustomerSelect("", fieldValue, readonly));
+                form.append(renderInvisibleInputField(fieldName, fieldValue));
+            }
         } else if (fieldName === "status") {
             form.append(renderStatusDropdown(fieldName, fieldValue));
         } else {
-            form.append(renderTextInputField(fieldName, fieldValue));
+            form.append(renderTextInputField(fieldName, fieldValue, readonly));
         }
     }
     // For update forms we need this
