@@ -1,4 +1,4 @@
-import { getItems } from "../io.js";
+import { getItems } from "../business.js";
 import { renderItemList } from "./list.js";
 
 const ROOT_ELEMENT = "main";

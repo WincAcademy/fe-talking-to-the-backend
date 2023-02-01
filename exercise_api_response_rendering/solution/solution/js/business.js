@@ -12,8 +12,9 @@ const flavourNameMinimumLength = 2;
 const customerNameMinimumLength = 2;
 const orderDescriptionMinimumLength = 8;
 
-// A proxy so events.js does not have to talk to io.js
+// Some proxies so events.js does not have to talk to io.js
 const getItem = io.getItem;
+const getItems = io.getItems;
 
 const getFlavours = async() => await io.getItems("flavours");
 
@@ -251,6 +252,7 @@ const deleteItem = (itemType, itemId) => {
 
 export {
     getItem,
+    getItems,
     getCustomerEmails,
     getCustomers,
     getCustomer,
