@@ -78,7 +78,7 @@ const renderAddButton = itemType => {
 };
 
 const renderItemList = async(items, itemType, errors) => {
-    // Div contains both the list and potentially a list of errors.
+    // Contains both the list and a list of 0..n errors.
     const div = document.createElement("div");
 
     const ul = document.createElement("ul");
@@ -95,8 +95,4 @@ const renderItemList = async(items, itemType, errors) => {
     insertIntoDom(div);
 };
 
-const renderFlavourList = async flavours => {
-    insertIntoDom(await renderItemList(flavours, "flavours"));
-};
-
-export { renderFlavourList, renderItemList };
+export { renderItemList };

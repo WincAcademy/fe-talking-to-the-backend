@@ -1,4 +1,3 @@
-// Business rules
 import * as io from "./io.js";
 
 const itemTypes = {
@@ -195,7 +194,6 @@ const validateAddUpdate = async(operation, itemType, data) => {
             errors = ["Incorrect itemType"];
             break;
     }
-    // We return [errorsFound (a bool), the array of errors]
     return [errors.length > 0, errors];
 };
 
@@ -237,7 +235,6 @@ const validateDelete = async(itemType, itemId) => {
     if (itemType === "orders") {
         errors = await validateDeleteOrder(itemId);
     }
-    // We return [errorsFound (a bool), the array of errors]
     return [errors.length > 0, errors];
 };
 

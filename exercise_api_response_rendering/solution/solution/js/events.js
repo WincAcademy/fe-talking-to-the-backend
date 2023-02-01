@@ -63,14 +63,15 @@ const handleDelete = async(itemType, itemId) => {
 const handleClickEvent = async event => {
     // Only react to add/edit/delete button clicks.
     // We assume classList only contains one of these.
+    const itemType = getItemType(event);
     if (event.target.classList.contains("edit")) {
-        handleEdit(getItemType(event), getItemId(event));
+        handleEdit(itemType, getItemId(event));
     }
     if (event.target.classList.contains("delete")) {
-        handleDelete(getItemType(event), getItemId(event));
+        handleDelete(itemType, getItemId(event));
     }
     if (event.target.classList.contains("add")) {
-        renderForm(getItemType(event));
+        renderForm(itemType);
     }
 };
 

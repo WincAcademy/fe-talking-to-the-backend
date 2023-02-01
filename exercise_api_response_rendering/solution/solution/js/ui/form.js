@@ -4,7 +4,7 @@ import { itemTypes, getCustomers, getOrderStatusList } from "../business.js";
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 
-const renderTextInputField = (name, value, readonly = False) => {
+const renderTextInputField = (name, value, readonly = false) => {
     const label = document.createElement("label");
     const span = document.createElement("span");
     let displayName = name;

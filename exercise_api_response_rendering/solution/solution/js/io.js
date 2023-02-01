@@ -17,7 +17,6 @@ const generateSendRequest =
                 Authorization: `Bearer ${api_key}`,
             };
         }
-        // console.log(`Sending ${options.method} request to ${url}`, { options });
         const response = await fetch(url, options);
 
         let result;
@@ -51,17 +50,14 @@ const getItem = async(itemType, itemId) => {
 };
 
 const addItem = (itemType, data) => {
-    // console.log("addItem", { itemType, data });
     return sendRequest("POST", `${itemType}`, data);
 };
 
 const updateItem = (itemType, itemId, data) => {
-    // console.log("updateItem", { itemType, itemId, data });
     return sendRequest("PUT", `${itemType}/${itemId}`, data);
 };
 
 const deleteItem = (itemType, itemId) => {
-    // console.log("deleteItem", { itemType, itemId });
     return sendRequest("DELETE", `${itemType}/${itemId}`);
 };
 
