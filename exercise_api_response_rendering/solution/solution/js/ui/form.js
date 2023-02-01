@@ -1,5 +1,5 @@
 import { getRoot } from "./shared.js";
-import { insertIntoDom } from "./shared.js";
+import { insertIntoDom, renderErrors } from "./shared.js";
 import { itemTypes, getCustomers, getOrderStatusList } from "../business.js";
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
@@ -92,21 +92,6 @@ const renderStatusDropdown = (name, value = "") => {
     return label;
 };
 
-const renderError = error => {
-    const li = document.createElement("li");
-    li.textContent = error;
-    return li;
-};
-
-const renderErrors = errors => {
-    const ul = document.createElement("ul");
-    ul.classList.add("errors");
-    for (let error of errors) {
-        ul.append(renderError(error));
-    }
-    return ul;
-};
-
 const renderForm = async(itemType, data, errors = []) => {
     // Three situations:
     // 1. fresh add: no data
@@ -131,6 +116,8 @@ const renderForm = async(itemType, data, errors = []) => {
     form.append(renderInvisibleInputField("type", itemType));
 
     const itemTypeFields = itemTypes[itemType];
+
+    // TODO: We can only update the status field of an order.
 
     for (const fieldName of itemTypeFields) {
         const fieldValue = data ? data[fieldName] : "";

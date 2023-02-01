@@ -46,8 +46,23 @@ const renderHome = () => {
     insertIntoDom(div);
 };
 
-const renderList = async itemType => {
-    renderItemList(await getItems(itemType), itemType);
+const renderList = async(itemType, errors = []) => {
+    renderItemList(await getItems(itemType), itemType, errors);
 };
 
-export { insertIntoDom, getRoot, renderList, renderHome };
+const renderError = error => {
+    const li = document.createElement("li");
+    li.textContent = error;
+    return li;
+};
+
+const renderErrors = errors => {
+    const ul = document.createElement("ul");
+    ul.classList.add("errors");
+    for (let error of errors) {
+        ul.append(renderError(error));
+    }
+    return ul;
+};
+
+export { insertIntoDom, getRoot, renderList, renderHome, renderErrors };

@@ -105,6 +105,13 @@ const getCustomerEmails = async(filterById = -1) => {
     return customers.map(customer => customer.email);
 };
 
+const getOrders = async() => await io.getItems("orders");
+
+const getOrder = async id => {
+    const orders = await getOrders();
+    return orders.find(order => order.id === id);
+};
+
 const validateCustomer = async(operation, { email, name, id }) => {
     let errors = [];
 
@@ -143,7 +150,7 @@ const validateCustomer = async(operation, { email, name, id }) => {
     return errors;
 };
 const validateOrder = async(
-    operation, { customerId, date, status, orderDescription }
+    _operation, { customerId, date, status, orderDescription }
 ) => {
     let errors = [];
 
@@ -173,7 +180,7 @@ const validateOrder = async(
 };
 
 const validateAddUpdate = async(operation, itemType, data) => {
-    let errors = [];
+    let errors;
     switch (itemType) {
         case "flavours":
             errors = await validateFlavour(operation, data);
@@ -192,8 +199,46 @@ const validateAddUpdate = async(operation, itemType, data) => {
     return [errors.length > 0, errors];
 };
 
-const validateDelete = () => {
-    // Delete a customer only possible if they have no orders.
+const validateDeleteCustomer = async id => {
+    let errors = [];
+    //  Customers may only be deleted if there are no orders for them.
+    const orders = await getOrders();
+    const numberOfOrdersForCustomer = orders.filter(
+        order => order.customerId == id
+    ).length;
+    if (numberOfOrdersForCustomer > 0) {
+        const customer = await getCustomer(id);
+        errors.push(
+            `Customer "${customer.name}" cannot be deleted, they still have ${numberOfOrdersForCustomer} orders.`
+        );
+    }
+    return errors;
+};
+
+const validateDeleteOrder = async id => {
+    let errors = [];
+    //  Orders may only be deleted if they have status "delivered".
+    const order = await getOrder(id);
+
+    if (order.status !== "delivered") {
+        errors.push(
+            "That order cannot be deleted. Only delivered orders can be deleted."
+        );
+    }
+
+    return errors;
+};
+
+const validateDelete = async(itemType, itemId) => {
+    let errors = [];
+    if (itemType === "customers") {
+        errors = await validateDeleteCustomer(itemId);
+    }
+    if (itemType === "orders") {
+        errors = await validateDeleteOrder(itemId);
+    }
+    // We return [errorsFound (a bool), the array of errors]
+    return [errors.length > 0, errors];
 };
 
 const addItem = (itemType, data) => {
@@ -205,13 +250,6 @@ const updateItem = (itemType, itemId, data) => {
 const deleteItem = (itemType, itemId) => {
     return io.deleteItem(itemType, itemId);
 };
-
-// Orders
-// We can add orders.
-// We can only delete orders that are unpaid.
-// We can only update the status of an order.
-// Status can be: unpaid, paid, transit, delivered. And only in that order.
-// customerId, date, status are required, items needs to be > 0
 
 export {
     getCustomerEmails,

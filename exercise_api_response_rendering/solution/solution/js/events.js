@@ -49,7 +49,13 @@ const handleEdit = async(itemType, itemId) => {
 };
 
 const handleDelete = async(itemType, itemId) => {
-    // TODO: validate
+    const [errorsFound, errors] = await validateDelete(itemType, itemId);
+
+    if (errorsFound) {
+        renderList(itemType, errors);
+        return;
+    }
+
     await deleteItem(itemType, itemId);
     renderList(itemType);
 };

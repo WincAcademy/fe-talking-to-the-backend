@@ -1,4 +1,4 @@
-import { insertIntoDom } from "./shared.js";
+import { insertIntoDom, renderErrors } from "./shared.js";
 import { getCustomer } from "../business.js";
 
 const renderItemProperty = (name, value) => {
@@ -77,7 +77,10 @@ const renderAddButton = itemType => {
     return li;
 };
 
-const renderItemList = async(items, itemType) => {
+const renderItemList = async(items, itemType, errors) => {
+    // Div contains both the list and potentially a list of errors.
+    const div = document.createElement("div");
+
     const ul = document.createElement("ul");
     ul.classList.add("items");
     ul.classList.add(itemType);
@@ -85,7 +88,11 @@ const renderItemList = async(items, itemType) => {
     for (let item of items) {
         ul.append(await renderItem(item, itemType));
     }
-    insertIntoDom(ul);
+
+    div.append(renderErrors(errors));
+    div.append(ul);
+
+    insertIntoDom(div);
 };
 
 const renderFlavourList = async flavours => {
