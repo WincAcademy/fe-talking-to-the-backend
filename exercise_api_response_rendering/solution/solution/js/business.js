@@ -43,8 +43,6 @@ const stringConsistsOfLettersOnly = str => {
     return re.test(str);
 };
 
-// TODO: add default order for different items.
-
 const validateFlavour = async(operation, { name, price, id }) => {
     let errors = [];
     const currentFlavours = await getFlavourNames();
