@@ -5,7 +5,6 @@ const ROOT_ELEMENT = "main";
 
 const getRoot = () => document.querySelector(ROOT_ELEMENT);
 
-// TODO: remove event listeners?
 const emptyRoot = () => {
     getRoot().innerHTML = "";
 };
